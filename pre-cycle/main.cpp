@@ -62,8 +62,12 @@ int main() {
         } while(pointer != in_cycle);
         
         unsigned int result = 0;
-        while(f(result, initial) != f(result + counter, initial)) {
+        unsigned int initial_value = initial;
+        unsigned int counter_value = f(counter, initial);
+        while(initial_value != counter_value) {
                 result++;
+                initial_value = f(initial_value);
+                counter_value = f(counter_value);
         }
 
         cout << "Result: " << result << endl;
