@@ -18,21 +18,26 @@ public:
                 n = DEFAULT_N;
         }
         unsigned int operator()(unsigned int x) {
-                return (myfunc(x) % n);
+                return myfunc(1, x);
         }
-        unsigned int operator()(unsigned int pow, unsigned int x) {
-                unsigned int result = 0;
-                if(pow > 1) {
-                        result = this(pow-1, x)*myfunc(x);
-                } else if(pow == 1) {
-                        result = myfunc(x);
-                }
-                
-                return result % n;
+        unsigned int operator()(unsigned int pow, unsigned int x) { 
+               return myfunc(pow, x);
         }
 private:
-        unsigned myfunc(unsigned int x) {
-                return x*x;
+        //FUNCTION IS HERE
+        unsigned int function(unsigned int x) {
+                return x*x % n;
+        }
+
+        unsigned int myfunc(unsigned int pow, unsigned int x) {
+                unsigned int result = 0;
+                if(pow > 0) {
+                        result = myfunc(pow-1, function(x)) % n;
+                } else if(pow == 0) {
+                        result = x % n;
+                }
+                
+                return result;
         }
         unsigned int n; 
 };
@@ -47,7 +52,7 @@ int main() {
         cout << "Initial number:" << endl;
         cin >> initial;
 
-        unsigned int in_cycle = f(2n, initial);
+        unsigned int in_cycle = f(2*n, initial);
         
         unsigned int counter = 0;
         unsigned int pointer = in_cycle;
@@ -57,9 +62,9 @@ int main() {
         } while(pointer != in_cycle);
         
         unsigned int result = 0;
-        do {
+        while(f(result, initial) != f(result + counter, initial)) {
                 result++;
-        } while(f(result, initial) != f(result + counter, initial));
+        }
 
         cout << "Result: " << result << endl;
 
