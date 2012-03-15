@@ -1,0 +1,195 @@
+#!/bin/bash
+
+#SETTINGS
+detailed=true
+
+usage() {
+	echo "Usage: first argument is program being checked; second argument is correct program to check answers."
+	echo "Each of next arguments should contain tests. It may be name of file or name of directory with files. Each file should contain input for one test."
+}
+
+under_test="$1"
+reliable_test="$2"
+
+#STATISTICS
+tests="0"
+succ="0"
+unsucc="0"
+miss="0"
+fcrash="0"
+scrash="0"
+
+#COLORS
+R="\e[00;31m"
+Y="\e[01;33m"
+G="\e[00;32m"
+N="\e[00m"
+
+
+declare -a result
+
+add_result() {
+	result=("${result[@]}" "$1")
+}
+
+if [ "$#" -le "1" ]
+then
+	usage
+	exit 1
+elif [ "$#" -eq "2"  ]
+then
+	echo "You should provide at least one test"
+	echo ""
+	usage
+	exit 2
+fi
+
+if [ ! -x "$under_test" ]
+then
+	echo "First argument is incorrect"
+	echo ""
+	usage
+	exit 3
+fi
+
+if [ ! -x "$reliable_test" ]
+then
+	echo "Second argument is incorrect"
+	echo ""
+	usage
+	exit 3
+fi
+
+check_file() {
+	let "tests++"
+
+	local_result="$1"
+	
+	if $detailed
+	then
+		echo "Testing on input $1:"
+		echo "----------INPUT BEGINS"
+		cat "$1"
+		echo "----------INPUT ENDS"
+
+		echo
+	fi
+
+	first=$(cat "$1" | "$under_test")
+	first_exit="$?"
+
+	if $detailed
+	then
+		echo "Program $under_test ended with exit code $first_test"
+		echo "----------OUTPUT BEGINS"
+		echo "$first"
+		echo "----------OUTPUT ENDS"
+
+		echo
+	fi
+
+	second=$(cat "$1" | "$reliable_test")
+	second_exit="$?"
+
+	if $detailed
+	then
+		echo "Program $reliable_test ended with exit code $second_test"
+		echo "----------OUTPUT BEGINS"
+		echo "$second"
+		echo "----------OUTPUT ENDS"
+
+		echo
+	fi
+
+	if [ "$first_exit" -eq "0" -a "$second_exit" -eq "0" ]
+	then
+		if [ "$first" = "$second" ]
+		then
+			let "succ++"
+
+			local_result="$local_result\t${G}OK${N}"
+			echo -e "Test ${G}OK${N}"
+		else
+			let "unsucc++"
+			let "miss++"
+
+			local_result="$local_result\t${Y}FAILED\tincorrect result${N}"
+			echo -e "Test ${Y}FAILED: INCORECT RESULT${N}"
+		fi
+	else
+		let "unsucc++"
+
+		local_result="$local_result\t${R}ERROR"
+		echo -e "Testing ${R}ERROR"
+
+		if [ "$first_exit" -ne "0" ]
+		then
+			let "fcrash++"
+
+			local_result="$local_result\tfirst program crashed"
+			echo "First program crashed"
+		fi
+
+		if [ "$second_exit" -ne "0" ]
+		then
+			let "scrash++"
+
+			local_result="$local_result\tsecond program crashed"
+			echo "Second program crashed"
+		fi
+
+		echo -e "${N}"
+		local_result="$local_result${N}"
+	fi
+
+	local_result="$local_result\n"
+	echo
+	echo
+
+	add_result "$local_result"
+}
+
+check_dir() {
+	for file in $(ls -1 "$1")
+	do
+		check_file "$1/$file"
+	done
+}
+
+recursive_check() {
+	if [ -d "$1" ]
+	then
+		for file in $(ls -1 "$1")
+		do
+			recursive_check "$1/$file"
+		done
+	else
+		check_file "$1"
+	fi
+}
+
+shift 2
+
+for arg in $@
+do
+	recursive_check "$arg"
+done
+
+echo
+echo
+echo "-----------------------------------"
+echo
+echo "Summary:"
+echo -e -n " ${result[@]}"
+
+echo
+echo "Statistics: $tests test(s)"
+echo -e "\t$succ successful"
+echo -e "\t$unsucc unsuccessful"
+echo "Unsuccessful tests statistics:"
+echo -e "\t$miss wrong results"
+echo -e "\t$fcrash crashes of first program"
+echo -e "\t$scrash crashes of second program"
+
+
+exit 0
