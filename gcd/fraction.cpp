@@ -40,6 +40,10 @@ Fraction::Fraction(const Fraction& _another) {
 	denominator = _another.denominator;
 }
 
+Fraction::Fraction(int _another) {
+	Fraction(_another, 1);
+}
+
 Fraction& Fraction::operator = (const Fraction& _another) {
 	numerator = _another.numerator;
 	denominator = _another.denominator;
@@ -136,6 +140,66 @@ bool Fraction::operator >= (const Fraction& _another) const {
 bool Fraction::operator <= (const Fraction& _another) const {
 	return numerator * _another.denominator <= denominator * _another.numerator;
 }
+
+Fraction& Fraction::operator = (int _another) {
+	return *this = Fraction(_another, 1);
+}
+Fraction Fraction::operator + (int _another) const {
+	return *this + Fraction(_another, 1);
+}
+
+Fraction& Fraction::operator += (int _another) {
+	return *this += Fraction(_another, 1);
+}
+
+Fraction Fraction::operator - (int _another) const {
+	return *this - Fraction(_another, 1);
+}
+
+Fraction& Fraction::operator -= (int _another) {
+	return *this -= Fraction(_another, 1);
+}
+
+Fraction Fraction::operator * (int _another) const {
+	return *this * Fraction(_another, 1);
+}
+
+Fraction& Fraction::operator *= (int _another) {
+	return *this *= Fraction(_another, 1);
+}
+
+Fraction Fraction::operator / (int _another) const {
+	return *this / Fraction(_another, 1);
+}
+
+Fraction& Fraction::operator /= (int _another) {
+	return *this /= Fraction(_another, 1);
+}
+
+bool Fraction::operator == (int _another) const {
+	return *this == Fraction(_another, 1);
+}
+
+bool Fraction::operator != (int _another) const {
+	return *this != Fraction(_another, 1);
+}
+
+bool Fraction::operator > (int _another) const {
+	return *this > Fraction(_another, 1);
+}
+
+bool Fraction::operator < (int _another) const {
+	return *this < Fraction(_another, 1);
+}
+
+bool Fraction::operator >= (int _another) const {
+	return *this >= Fraction(_another, 1);
+}
+
+bool Fraction::operator <= (int _another) const {
+	return *this <= Fraction(_another, 1);
+}
+
 
 int Fraction::getNumerator() const {
 	return numerator;

@@ -12,18 +12,35 @@ int max(int a, int b) {
 //template<>
 std::ostream& operator<< (std::ostream& result, const Polynom& polynom) {
 	bool notFirst = false;
-	for(int i = polynom.pow(); i >= 0; i--) {
-		if(polynom[i] != Fraction(0, 1)) {
-			if(polynom[i] > Fraction(0, 1) && notFirst) {
+
+	for(int i = polynom.pow(); i > 1; i--) {
+		if(polynom[i] != 0) {
+			if(polynom[i] > 0 && notFirst) {
 				result << "+";
 			}
-			if(polynom[i] != Fraction(1, 1)) {
+			if(polynom[i] != 1) {
 				result << polynom[i] << "*";
 			}
 	
 			result << "x^" << i << " ";
 		}
 		notFirst = true;
+	}
+
+	if(polynom.pow() > 0) {
+		if(polynom[1] > 0 && notFirst) {
+			result << "+";
+		}
+		if(polynom[1] != 1) {
+			result << polynom[1] << "*";
+		}
+		result << "x ";
+	}
+
+	if(polynom[0] > 0) {
+		result << "+" << polynom[0];
+	} else if(polynom[0] < 0) {
+		result << polynom[0];
 	}
 
 	return result;
@@ -40,10 +57,10 @@ Polynom::Polynom() {
 }
 
 Polynom::Polynom(vector<int>& _a) {
-	a.resize(_a.size(), Fraction(0, 1));
+	a.resize(_a.size(), 0);
 
 	for(unsigned int i = 0; i < _a.size(); i++) {
-		a[i] = Fraction(_a[i], 1);
+		a[i] = _a[i];
 	}
 
 	simplify();
@@ -53,7 +70,7 @@ Polynom::Polynom(const Polynom& _another, unsigned int begin, unsigned int end) 
 	a = _another.a;
 	for(unsigned int i = 0; i < a.size(); i++) {
 		if( (i < begin) || (i > end) ) {
-			a[i] = Fraction(0, 1);
+			a[i] = 0;
 		}
 	}
 
@@ -106,7 +123,7 @@ Polynom Polynom::operator - (const Polynom& _another) const {
 
 Polynom& Polynom::operator -= (const Polynom& _another) {
 	Polynom result;
-	result.a.resize(max(pow(), _another.pow()) + 1, Fraction(0, 1));
+	result.a.resize(max(pow(), _another.pow()) + 1, Fraction(0, 1)); //0 instead of Fraction(0,1) gives really strange results
 
 	for(int i = 0; i <= pow(); i++) {
 		result.a[i] += a[i];
@@ -209,10 +226,10 @@ pair<Polynom, Polynom> Polynom::divide(const Polynom& _another) const {
 	result.first.simplify();
 	result.second.simplify();
 
-	while(result.second.pow() >= _another.pow()) {
+	while(result.second.pow() >= _another.pow() && (result.second.pow() != 0 || result.second[0] != 0)) {
 		Polynom t;
 		unsigned int i = result.second.pow() - _another.pow();
-		t.a.resize(i + 1, Fraction(0, 1));
+		t.a.resize(i + 1, 0);
 		t.a[i] = result.second[result.second.pow()] / _another[_another.pow()];
 
 		result.first += t;
@@ -227,7 +244,7 @@ const Fraction& Polynom::operator [] (int i) const {
 }
 
 void Polynom::simplify() {
-	while(a.back() == Fraction(0, 1) && a.size() > 1) {
+	while(a.back() == 0 && a.size() > 1) {
 		a.pop_back();
 	}
 }

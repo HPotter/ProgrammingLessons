@@ -22,6 +22,23 @@ public:
 	bool operator < (const Fraction& _another) const;
 	bool operator >= (const Fraction& _another) const;
 	bool operator <= (const Fraction& _another) const;
+
+	Fraction& operator = (int _another);
+	Fraction operator + (int _another) const;
+	Fraction& operator += (int _another);
+	Fraction operator - (int _another) const;
+	Fraction& operator -= (int _another);
+	Fraction operator * (int _another) const;
+	Fraction& operator *= (int _another);
+	Fraction operator / (int _another) const;
+	Fraction& operator /= (int _another);
+	bool operator == (int _another) const;
+	bool operator != (int _another) const;
+	bool operator > (int _another) const;
+	bool operator < (int _another) const;
+	bool operator >= (int _another) const;
+	bool operator <= (int _another) const;
+
 	int getNumerator() const;
 	int getDenominator() const;
 private:
