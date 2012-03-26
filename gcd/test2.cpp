@@ -5,9 +5,9 @@
 using namespace std;
 
 int main() {
-	std::vector<int> a(3, 0);
-	std::vector<int> b(2, 0);
-/*
+	std::vector<int> a;
+	std::vector<int> b;
+
 	int size;
 	cout << "First polynom's power:" << endl;
 	cin >> size;
@@ -23,13 +23,6 @@ int main() {
 	for(int i = 0; i < size; i++) {
 		cin >> b[i];
 	}
-*/
-	
-	a[0] = 1;
-	a[1] = 2;
-	a[2] = 1;
-	b[0] = 1;
-	b[1] = 1;
 
 	Polynom pa(a);
 	Polynom pb(b);
