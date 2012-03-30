@@ -59,9 +59,9 @@ Fraction Fraction::operator + (const Fraction& _another) const {
 }
 
 Fraction& Fraction::operator += (const Fraction& _another) {
-	denominator *= _another.denominator;
 	numerator *= _another.denominator;
 	numerator += _another.numerator * denominator;
+	denominator *= _another.denominator;
 
 	shorten();
 
@@ -76,9 +76,9 @@ Fraction Fraction::operator - (const Fraction& _another) const {
 }
 
 Fraction& Fraction::operator -= (const Fraction& _another) {
-	denominator *= _another.denominator;
 	numerator *= _another.denominator;
 	numerator -= _another.numerator * denominator;
+	denominator *= _another.denominator;
 
 	shorten();
 
