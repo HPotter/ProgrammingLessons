@@ -56,6 +56,10 @@ Polynom::Polynom() {
 	a.resize(1, Fraction(0, 1));
 }
 
+Polynom::Polynom(int _a) {
+	a.resize(1, Fraction(_a, 1));
+}
+
 Polynom::Polynom(vector<int>& _a) {
 	a.resize(_a.size(), 0);
 
@@ -192,8 +196,17 @@ bool Polynom::operator == (const Polynom& _another) const {
 		return false;
 	}
 
+	Polynom tmp;
+	if(a[pow()] != _another[_another.pow()]) {
+		if(_another[_another.pow()] == 0) {
+			return a[pow()] == 0;
+		}
+		tmp.a[0] = a[pow()] / _another[_another.pow()];
+	}
+	tmp *= _another;
+
 	for(int i = 0; i < pow(); i++) {
-		if(a[i] != _another.a[i]) {
+		if(a[i] != tmp.a[i]) {
 			return false;
 		}
 	}

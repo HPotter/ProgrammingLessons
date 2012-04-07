@@ -12,6 +12,7 @@ public:
 	Polynom();
 	Polynom(const Polynom& _another);
 	Polynom(vector<int>& _a);
+	Polynom(int a);
 	int pow() const;
 	Polynom& operator = (const Polynom& _another);
 	Polynom operator + (const Polynom& _another) const;

@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -Wall -g
-O = test1.o test2.o test3.o test4.o fraction.o polynom.o
+O = test1.o test2.o test3.o test4.o test5.o fraction.o polynom.o
 
 all: test1 test2
 	rm -f $(O)
@@ -21,6 +21,10 @@ test4: test4.o polynom.o fraction.o
 	$(CC) $(CFLAGS) test4.o polynom.o fraction.o -o test4
 	rm -f $(O)
 
+test5: test5.o polynom.o fraction.o
+	$(CC) $(CFLAGS) test5.o polynom.o fraction.o -o test5
+	rm -f $(O)
+
 polynom.o: polynom.cpp
 	$(CC) $(CFLAGS) -c polynom.cpp -o polynom.o
 
@@ -39,5 +43,8 @@ test4.o: test4.cpp
 test3.o: test3.cpp
 	$(CC) $(CFLAGS) -c test3.cpp -o test3.o
 
+test5.o: test5.cpp
+	$(CC) $(CFLAGS) -c test5.cpp -o test5.o
+
 clean:
-	rm -f test1 test2 test3 test 4 $(O)
+	rm -f test1 test2 test3 test4 test5 $(O)
