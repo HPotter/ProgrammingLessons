@@ -8,30 +8,13 @@ using namespace std;
 
 class Tree {
 public:
-	template<typename T>
-	class Iterator {
-		public:
-			Iterator(const T& _iterator) : iterator(_iterator) {}
-			Iterator& operator ++ () {
-				++iterator;
-				return *this;
-			}
-			Iterator operator ++ (int) {
-				Iterator t = *this;
-				iterator++;
-				return t;
-			}
-			int& operator * () {
-				return *iterator;
-			}
-		private:
-			T iterator;
-	};
 	class AbstractIterator : public iterator<forward_iterator_tag, int> {
 		public:
 			AbstractIterator(const Tree& _tree) : tree(_tree) {
 				current = tree.root;
 			}
+
+			AbstractIterator() : tree(Tree()) {}
 			
 			virtual AbstractIterator& operator ++ () {
 				return *this;
@@ -56,6 +39,8 @@ public:
 			BFSIterator(const Tree& _tree) : AbstractIterator(_tree) {
 				iterate();
 			}
+
+			BFSIterator() {}
 
 			virtual BFSIterator operator ++ (int) {
 				BFSIterator t = *this;
@@ -92,6 +77,8 @@ public:
 				visited[current] = true;
 				--remaining;
 			}
+
+			DFSIterator() {}
 
 			DFSIterator operator ++ (int) {
 				DFSIterator t = *this;
@@ -130,6 +117,50 @@ public:
 			int remaining;
 	};
 
+	class Iterator {
+		public:
+			Iterator(const BFSIterator& _bfs) : bfs(_bfs), isDFS(false) {}
+			Iterator(const DFSIterator& _dfs) : dfs(_dfs), isDFS(true) {}
+
+			Iterator& operator ++ () {
+				prefixInc();
+				return *this;
+			}
+			Iterator operator ++ (int) {
+				Iterator t = *this;
+				postfixInc();
+				return t;
+			}
+			int& operator * () {
+				return unlink();
+			}
+		private:
+			bool isDFS;
+			DFSIterator dfs;
+			BFSIterator bfs;
+			void prefixInc() {
+				if(isDFS) {
+					++dfs;
+				} else {
+					++bfs;
+				}
+			};
+			void postfixInc() {
+				if(isDFS) {
+					dfs++;
+				} else {
+					bfs++;
+				}
+			};
+			int& unlink() {
+				if(isDFS) {
+					return *dfs;
+				} else {
+					return *bfs;
+				}
+			}
+	};
+
 	Tree() {}
 
 	Tree(const Tree& _another) {
@@ -154,12 +185,12 @@ public:
 		parents[_to] = _from;
 	}
 
-	Iterator<DFSIterator> getDFSIterator() {
-		return Iterator<DFSIterator>(DFSIterator(*this));
+	Iterator getDFSIterator() {
+		return Iterator(DFSIterator(*this));
 	}
 
-	BFSIterator getBFSIterator() {
-		return BFSIterator(*this);
+	Iterator getBFSIterator() {
+		return Iterator(BFSIterator(*this));
 	}
 
 	void print() const {

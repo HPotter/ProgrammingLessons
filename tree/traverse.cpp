@@ -8,14 +8,13 @@ int main() {
 	t.setRoot(0);
 	int edges;
 	cin >> edges;
-	Tree::AbstractIterator a(t);
 	for(int i = 0; i < edges; i++) {
 		int x,y;
 		cin >> x >> y;
 		t.addEdge(x, y);
 	}
 	t.print();
-	Tree::Iterator<Tree::DFSIterator> dfs = t.getDFSIterator();
+	Tree::Iterator dfs = t.getDFSIterator();
 //	Tree::Iterator& idfs = dfs;
 	for(int i = 0; ; i++) {
 		int t = *(dfs++);
@@ -23,7 +22,7 @@ int main() {
 		cout << t;
 	}
 	cout << endl;
-	Tree::BFSIterator bfs = t.getBFSIterator();
+	Tree::Iterator bfs = t.getBFSIterator();
 	for(int i = 0; ; i++) {
 		int t = *(bfs++);
 		if(t < 0) break;
