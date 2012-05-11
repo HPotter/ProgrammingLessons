@@ -2,25 +2,47 @@
 #include <iterator>
 #include <algorithm>
 #include <queue>
+#include <iostream>
 
 using namespace std;
 
 class Tree {
 public:
-	class Iterator : public iterator<forward_iterator_tag, int> {
+	template<typename T>
+	class Iterator {
 		public:
-			Iterator(const Tree& _tree) : tree(_tree) {
-				current = tree.root;
-			}
-			/*
-			virtual Iterator& operator ++ () {
+			Iterator(const T& _iterator) : iterator(_iterator) {}
+			Iterator& operator ++ () {
+				++iterator;
 				return *this;
 			}
-			virtual Iterator& operator ++ (int) {
+			Iterator operator ++ (int) {
+				Iterator t = *this;
+				iterator++;
+				return t;
+			}
+			int& operator * () {
+				return *iterator;
+			}
+		private:
+			T iterator;
+	};
+	class AbstractIterator : public iterator<forward_iterator_tag, int> {
+		public:
+			AbstractIterator(const Tree& _tree) : tree(_tree) {
+				current = tree.root;
+			}
+			
+			virtual AbstractIterator& operator ++ () {
+				return *this;
+			}
+			/*
+			virtual AbstractIterator& operator ++ (int) {
 				return *this;
 			}
 			*/
-			virtual Iterator& operator ++() = 0;
+//			virtual AbstractIterator& operator ++() = 0;
+//			virtual AbstractIterator operator ++(int) = 0;
 			int& operator * () {
 				return current;
 			}
@@ -29,13 +51,13 @@ public:
 			const Tree& tree;
 	};
 
-	class BFSIterator : public Iterator {
+	class BFSIterator : public AbstractIterator {
 		public:
-			BFSIterator(const Tree& _tree) : Iterator(_tree) {
+			BFSIterator(const Tree& _tree) : AbstractIterator(_tree) {
 				iterate();
 			}
 
-			BFSIterator operator ++ (int) {
+			virtual BFSIterator operator ++ (int) {
 				BFSIterator t = *this;
 				++(*this);
 				return t;
@@ -61,9 +83,9 @@ public:
 			queue<int> q;
 	};
 
-	class DFSIterator : public Iterator {
+	class DFSIterator : public AbstractIterator {
 		public:
-			DFSIterator(const Tree& _tree) : Iterator(_tree) {
+			DFSIterator(const Tree& _tree) : AbstractIterator(_tree) {
 				remaining = tree.parents.size();
 				visited.resize(remaining, false);
 
@@ -121,9 +143,10 @@ public:
 	}
 
 	void addEdge(int _from, int _to) {
-		int size = max(max(_from, _to), (int)childs.size()) + 1;
-		childs.reserve(size+1); //LOLWUT???
-		parents.reserve(size+1); //LOLWUT???
+//		cout << "newEdge (" << _from << ", " << _to << ")" << endl;
+		int size = max(max(_from, _to) + 1, (int)childs.size());
+		childs.reserve(size); //LOLWUT???
+		parents.reserve(size); //LOLWUT???
 		childs.resize(size);
 		parents.resize(size);
 
@@ -131,13 +154,25 @@ public:
 		parents[_to] = _from;
 	}
 
-	DFSIterator getDFSIterator() {
-		return DFSIterator(*this);
+	Iterator<DFSIterator> getDFSIterator() {
+		return Iterator<DFSIterator>(DFSIterator(*this));
 	}
 
 	BFSIterator getBFSIterator() {
 		return BFSIterator(*this);
 	}
+
+	void print() const {
+		cout << "root " << root << endl;
+		for(int i = 0; i < childs.size(); i++) {
+			cout << i << "childs:";
+			for(int j = 0; j < childs[i].size(); j++) {
+				cout << " " << childs[i][j];
+			}
+			cout << endl;
+		}
+	}
+
 private:
 	vector<int> parents;
 	vector< vector<int> > childs;

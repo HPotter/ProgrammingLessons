@@ -8,12 +8,15 @@ int main() {
 	t.setRoot(0);
 	int edges;
 	cin >> edges;
+	Tree::AbstractIterator a(t);
 	for(int i = 0; i < edges; i++) {
 		int x,y;
 		cin >> x >> y;
 		t.addEdge(x, y);
 	}
-	Tree::DFSIterator dfs = t.getDFSIterator();
+	t.print();
+	Tree::Iterator<Tree::DFSIterator> dfs = t.getDFSIterator();
+//	Tree::Iterator& idfs = dfs;
 	for(int i = 0; ; i++) {
 		int t = *(dfs++);
 		if(t < 0) break;
