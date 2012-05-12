@@ -13,20 +13,19 @@ int main() {
 		cin >> x >> y;
 		t.addEdge(x, y);
 	}
-	t.print();
+	std::cout << t;
 	Tree::Iterator dfs = t.getDFSIterator();
-//	Tree::Iterator& idfs = dfs;
 	for(int i = 0; ; i++) {
 		int t = *(dfs++);
 		if(t < 0) break;
-		cout << t;
+		cout << t << " ";
 	}
 	cout << endl;
 	Tree::Iterator bfs = t.getBFSIterator();
 	for(int i = 0; ; i++) {
 		int t = *(bfs++);
 		if(t < 0) break;
-		cout << t;
+		cout << t << " ";
 	}
 	return 0;
 }
